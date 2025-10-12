@@ -15,7 +15,11 @@ import {
 import { Colors } from "src/constants/Colors";
 import OutlinedButton from "src/components/UI/OutlinedButton/OutlinedButton";
 
-const ImagePicker = () => {
+type ImagePickerProps = {
+  onImagePicked: (uri: string) => void;
+};
+
+const ImagePicker = ({ onImagePicked }: ImagePickerProps) => {
   const [cameraPermissionInformation, requestPermission] =
     useCameraPermissions();
 
@@ -47,11 +51,14 @@ const ImagePicker = () => {
       quality: 0.5,
     });
     if (image.assets && image.assets.length > 0) {
-      setPickedImage(image.assets[0].uri);
+      const uri = image.assets[0].uri;
+      setPickedImage(uri);
+      onImagePicked(uri);
     } else {
       setPickedImage(undefined);
     }
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.imagePreview}>

@@ -1,10 +1,10 @@
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import React from "react";
-import { Place } from "../../../types/placeType";
 import PlaceItem from "../PlaceItem/PlaceItem";
 import { Colors } from "src/constants/Colors";
+import { PlaceType } from "src/models/places";
 
-const PlacesList = ({ places }: { places: Place[] }) => {
+const PlacesList = ({ places }: { places: PlaceType[] }) => {
   if (!places || places.length === 0) {
     return (
       <View style={styles.fallBackContainer}>

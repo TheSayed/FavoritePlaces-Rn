@@ -1,12 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useCallback, useLayoutEffect, useState } from "react";
-import { View, StyleSheet, Alert } from "react-native";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
+import { View, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import MapView, { Marker, MapPressEvent, Region } from "react-native-maps";
+import * as Location from "expo-location";
 import IconButton from "src/components/UI/IconButton/IconButton";
 import { MainStackParamList } from "src/navigation/MainStackParams";
 
-interface Location {
+interface LocationCoords {
   latitude: number;
   longitude: number;
 }
@@ -14,17 +20,50 @@ interface Location {
 type MapNavigationProp = NativeStackNavigationProp<MainStackParamList, "Map">;
 
 const Map: React.FC = () => {
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
-    null
-  );
+  const [selectedLocation, setSelectedLocation] =
+    useState<LocationCoords | null>(null);
+  const [region, setRegion] = useState<Region | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   const navigation = useNavigation<MapNavigationProp>();
 
-  const region: Region = {
-    latitude: 30.0084,
-    longitude: 31.0132,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-  };
+  // ✅ Get user location when component mounts
+  useEffect(() => {
+    (async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert(
+            "Permission denied",
+            "Location permission is required to use the map."
+          );
+          setIsLoading(false);
+          return;
+        }
+
+        const userLocation = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Highest,
+        });
+
+        const { latitude, longitude } = userLocation.coords;
+
+        setRegion({
+          latitude,
+          longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        });
+
+        // Optional: place a marker at user’s location initially
+        setSelectedLocation({ latitude, longitude });
+      } catch (error) {
+        Alert.alert("Error", "Failed to fetch location.");
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, []);
 
   const selectLocationHandler = (event: MapPressEvent) => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
@@ -35,7 +74,7 @@ const Map: React.FC = () => {
     if (!selectedLocation) {
       Alert.alert(
         "No Location Picked",
-        "You need to press on the map in order to pick a location"
+        "Tap on the map to choose a location first."
       );
       return;
     }
@@ -57,6 +96,14 @@ const Map: React.FC = () => {
       ),
     });
   }, [navigation, saveLocationHandler]);
+
+  if (isLoading || !region) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -81,5 +128,10 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

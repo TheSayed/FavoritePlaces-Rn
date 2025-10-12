@@ -1,9 +1,16 @@
+import { PlaceType } from "src/models/places";
+
 export type MainStackParamList = {
-  AllPlaces: undefined;
+  AllPlaces:
+    | {
+        place?: PlaceType;
+      }
+    | undefined;
   AddPlaces:
     | {
         pickedLat: number;
         pickedLng: number;
+        place?: PlaceType;
       }
     | undefined;
   Map: undefined;
