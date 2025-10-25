@@ -7,6 +7,7 @@ import IconButton from "../components/UI/IconButton/IconButton";
 import { Colors } from "src/constants/Colors";
 import Map from "src/screens/Map/Map";
 import { MainStackParamList } from "./MainStackParams";
+import PlaceDetails from "src/screens/PlaceDetails/PlaceDetails";
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
 const MainStackNavigation = () => {
@@ -24,12 +25,14 @@ const MainStackNavigation = () => {
         options={({ navigation }) => ({
           title: "Your Favorite Places",
           headerRight: ({ tintColor }) => (
-            <IconButton
-              icon="add"
-              size={24}
-              color={tintColor ?? "#000"}
-              onPress={() => navigation.navigate("AddPlaces")}
-            />
+            <View style={{ paddingStart: 8 }}>
+              <IconButton
+                icon="add"
+                size={24}
+                color={tintColor ?? "#000"}
+                onPress={() => navigation.navigate("AddPlaces")}
+              />
+            </View>
           ),
         })}
       />
@@ -45,6 +48,13 @@ const MainStackNavigation = () => {
         component={Map}
         options={{
           title: "MAP",
+        }}
+      />
+      <Stack.Screen
+        name="PlaceDetails"
+        component={PlaceDetails}
+        options={{
+          title: "Place Details",
         }}
       />
     </Stack.Navigator>

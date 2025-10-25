@@ -20,12 +20,10 @@ export default IconButton;
 
 const styles = StyleSheet.create({
   button: {
-    padding: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     marginRight: 8,
-    marginTop: 2,
-    marginBottom: 2,
     justifyContent: "center",
     alignItems: "center",
   },
-  pressed: {},
 });

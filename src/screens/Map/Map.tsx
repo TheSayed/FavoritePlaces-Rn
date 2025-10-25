@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, {
   useCallback,
@@ -18,6 +18,7 @@ interface LocationCoords {
 }
 
 type MapNavigationProp = NativeStackNavigationProp<MainStackParamList, "Map">;
+type MapRouteProp = RouteProp<MainStackParamList, "Map">;
 
 const Map: React.FC = () => {
   const [selectedLocation, setSelectedLocation] =
@@ -26,6 +27,9 @@ const Map: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const navigation = useNavigation<MapNavigationProp>();
+  const route = useRoute<MapRouteProp>();
+  const lat = route.params?.lat;
+  const lng = route.params?.lng;
 
   // ✅ Get user location when component mounts
   useEffect(() => {
@@ -48,8 +52,8 @@ const Map: React.FC = () => {
         const { latitude, longitude } = userLocation.coords;
 
         setRegion({
-          latitude,
-          longitude,
+          latitude: lat ? lat : latitude,
+          longitude: lng ? lng : longitude,
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         });
@@ -66,6 +70,9 @@ const Map: React.FC = () => {
   }, []);
 
   const selectLocationHandler = (event: MapPressEvent) => {
+    if (route.params?.lat || route.params?.lng) {
+      return;
+    }
     const { latitude, longitude } = event.nativeEvent.coordinate;
     setSelectedLocation({ latitude, longitude });
   };
@@ -85,14 +92,19 @@ const Map: React.FC = () => {
   }, [selectedLocation, navigation]);
 
   useLayoutEffect(() => {
+    if (route.params?.lat || route.params?.lng) {
+      return;
+    }
     navigation.setOptions({
       headerRight: ({ tintColor }) => (
-        <IconButton
-          icon="save"
-          size={24}
-          color={tintColor || "red"}
-          onPress={saveLocationHandler}
-        />
+        <View style={{ paddingStart: 8 }}>
+          <IconButton
+            icon="save"
+            size={24}
+            color={tintColor || "red"}
+            onPress={saveLocationHandler}
+          />
+        </View>
       ),
     });
   }, [navigation, saveLocationHandler]);

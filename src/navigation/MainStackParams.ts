@@ -13,5 +13,11 @@ export type MainStackParamList = {
         place?: PlaceType;
       }
     | undefined;
-  Map: undefined;
+  Map: {
+    lat: number;
+    lng: number;
+  };
+  PlaceDetails: {
+    placeId: string | number;
+  };
 };

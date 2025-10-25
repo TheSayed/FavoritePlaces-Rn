@@ -31,6 +31,7 @@ module.exports = {
       favicon: "./assets/favicon.png",
     },
     plugins: [
+      "expo-sqlite",
       [
         "expo-image-picker",
         {

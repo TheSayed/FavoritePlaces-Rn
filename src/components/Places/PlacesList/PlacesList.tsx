@@ -3,8 +3,16 @@ import React from "react";
 import PlaceItem from "../PlaceItem/PlaceItem";
 import { Colors } from "src/constants/Colors";
 import { PlaceType } from "src/models/places";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { MainStackParamList } from "src/navigation/MainStackParams";
 
+type PlacesListNavigationProp = NativeStackNavigationProp<
+  MainStackParamList,
+  "AllPlaces"
+>;
 const PlacesList = ({ places }: { places: PlaceType[] }) => {
+  const navigation = useNavigation<PlacesListNavigationProp>();
   if (!places || places.length === 0) {
     return (
       <View style={styles.fallBackContainer}>
@@ -14,11 +22,18 @@ const PlacesList = ({ places }: { places: PlaceType[] }) => {
       </View>
     );
   }
+  const onSelectItem = (id: string | number) => {
+    navigation.navigate("PlaceDetails", {
+      placeId: id,
+    });
+  };
   return (
     <FlatList
       data={places}
       keyExtractor={(item) => (item.id ? String(item.id) : "")}
-      renderItem={({ item }) => <PlaceItem place={item} onSelect={() => {}} />}
+      renderItem={({ item }) => (
+        <PlaceItem place={item} onSelect={() => onSelectItem(item.id)} />
+      )}
     />
   );
 };

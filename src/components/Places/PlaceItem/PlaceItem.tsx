@@ -9,7 +9,8 @@ type Props = {
 };
 
 const PlaceItem = ({ place, onSelect }: Props) => {
-  const { imageUri, address, title } = place;
+  const { imageUri, location, title } = place;
+  const { address } = location;
 
   return (
     <TouchableOpacity

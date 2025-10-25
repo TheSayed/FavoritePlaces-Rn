@@ -3,6 +3,7 @@ import PlacesList from "src/components/Places/PlacesList/PlacesList";
 import { RouteProp, useIsFocused, useRoute } from "@react-navigation/native";
 import { MainStackParamList } from "src/navigation/MainStackParams";
 import { PlaceType } from "src/models/places";
+import { getPlaces } from "src/utils/database";
 
 export type AllPlacesRouteProp = RouteProp<MainStackParamList, "AllPlaces">;
 
@@ -12,11 +13,14 @@ const AllPlaces = () => {
   const [loadedPlaces, setLoadedPlaces] = useState<PlaceType[]>([]);
 
   useEffect(() => {
-    const place = route.params?.place;
-    if (isFocused && place) {
-      setLoadedPlaces((currPlaces) => [...currPlaces, place]);
+    async function loadPlaces() {
+      const places = await getPlaces();
+      setLoadedPlaces(places);
     }
-  }, [isFocused, route.params]);
+    if (isFocused) {
+      loadPlaces();
+    }
+  }, [isFocused]);
 
   return <PlacesList places={loadedPlaces} />;
 };

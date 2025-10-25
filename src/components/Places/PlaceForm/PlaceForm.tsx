@@ -21,16 +21,20 @@ const PlaceForm = ({ onCreatePlace }: PlaceFormProps) => {
     setImageTaken(image);
   }, []);
 
-  const handleLocationPicked = useCallback((location: Location) => {
+  const onLocationPicked = useCallback((location: Location) => {
     setLocationPicked(location);
   }, []);
   const saveFormInfo = () => {
     if (!enteredTitle || !imageTaken || !locationPicked) {
-      // You can add validation or alert here
       return;
     }
 
-    const placeData = new Place(enteredTitle, imageTaken, locationPicked);
+    const placeData = new Place(
+      enteredTitle,
+      imageTaken,
+      locationPicked,
+      Math.random().toString(36).substr(2, 9) // Generate unique ID
+    );
     onCreatePlace(placeData);
   };
 
@@ -44,9 +48,9 @@ const PlaceForm = ({ onCreatePlace }: PlaceFormProps) => {
         style={styles.input}
       />
       <ImagePicker onImagePicked={handleImageTaken} />
-      <LocationPicker onLocationTaken={handleLocationPicked} />
+      <LocationPicker onLocationTaken={onLocationPicked} />
       <MainButton onPress={saveFormInfo}>
-        <Text>Add Place</Text>
+        <Text style={styles.btnText}>Add Place</Text>
       </MainButton>
     </ScrollView>
   );
@@ -73,5 +77,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     backgroundColor: Colors.primary100,
     borderRadius: 10,
+  },
+  btnText: {
+    color: "white",
+    fontSize: 18,
   },
 });
