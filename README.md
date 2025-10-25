@@ -49,7 +49,7 @@ For Android:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/favorite-places.git
+git clone https://github.com/TheSayed/FavoritePlaces-Rn
 cd favorite-places
 ```
 
